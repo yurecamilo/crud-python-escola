@@ -3,11 +3,11 @@ import mysql.connector
 def abrebanco():
     try:
         global conexao
-        conexao = mysql.connector.Connect(host='127.0.0.1',port = 3307, database='univap',
+        conexao = mysql.connector.Connect(host='127.0.0.1',port = 3306, database='univap',
         user='root', password='')
         #Na escola remover port = 3307
         if conexao.is_connected():
-            informacaobanco = conexao.server_info
+            informacaobanco = conexao.get_server_info()
             print(f'Conectado ao servidor banco de dados - Versão {informacaobanco}')
             print('Conexão ok')
             global comandosql

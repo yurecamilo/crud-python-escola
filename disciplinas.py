@@ -9,11 +9,12 @@ def abrebanco():
         # user = nome do usuário definido no momento de criação do banco de dados
         # password = senha de acesso do banco de dados
         global conexao
-        conexao = mysql.connector.Connect(host='127.0.0.1',port = 3307, database='univap',
+        conexao = mysql.connector.Connect(host='127.0.0.1', database='univap',
         user='root', password='')
         # testando se estamos conectado ao banco de dados
         if conexao.is_connected():
-            informacaobanco = conexao.server_info
+            informacaobanco = conexao.get_server_info()
+
             print(f'Conectado ao servidor banco de dados - Versão {informacaobanco}')
             print('Conexão ok')
             # criando objeto cursor, responsável para trabalharmos com registros retornados pela tabela fisica
@@ -21,7 +22,7 @@ def abrebanco():
             comandosql = conexao.cursor()
             # Criando uma QUERY para mostrar as informações do banco de dados ao qual nos conectamos
             comandosql.execute('select database();')
-            # usando método fetchone para buscar um dado do banco de dados e armazenálo na variável nomebanco
+
             nomebanco = comandosql.fetchone()
             print(f'Banco de dados acessado = {nomebanco}')
             print('='*80)
@@ -97,12 +98,15 @@ def alterardisciplina(cd=0, nomedisciplina=''):
 
 def excluirdisciplina(cd=0):
     try:
-        comandosql = conexao.cursor() 
-        #criando comando delete e concatenando o código da disciplina para ser escluída
-        comandosql.execute(f'delete from disciplinas where codigodisc = {cd};')
-        #método commit é responsável por gravar de fato o novo registro de disciplina na tabela
-        conexao.commit()
-        return 'Disciplina excluída com sucesso !!! '
+        comandosql = conexao.cursor()
+        comandosql.execute(f'SELECT * FROM disciplinasxprofessores WHERE coddisciplina = {cd};')
+        resultados = comandosql.fetchall()  # consome todos os resultados
+        if len(resultados) > 0:
+            return 'Não foi possível excluir esta disciplina pois existe uma relação associada a ela!!!'
+        else:
+            comandosql.execute(f'DELETE FROM professores WHERE registro = {cd};')
+            conexao.commit()
+            return 'Disciplina excluída com sucesso !!!'
     except Exception as erro :
         print(f'Erro: {erro}')
         return 'Não foi possível excluir esta disciplina'
