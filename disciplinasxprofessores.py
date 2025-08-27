@@ -86,29 +86,13 @@ def consultardisciplinaxprofessor(cdc=0):
 
 def atualizardisciplinaxprofessor(cdc=0, cd=0, cp=0, c=0, ch=0, al=0):
     try:
-        # Verifica se a disciplina existe
         comandosql = conexao.cursor()
-        comandosql.execute(f'SELECT codigodisc FROM disciplinas WHERE codigodisc = {cd};')
-        if not comandosql.fetchone():
-            return 'Erro: Disciplina não encontrada!'
-            
-        # Verifica se o professor existe
-        comandosql.execute(f'SELECT registro FROM professores WHERE registro = {cp};')
-        if not comandosql.fetchone():
-            return 'Erro: Professor não encontrado!'
-            
-        # Se chegou até aqui, pode atualizar
-        comandosql.execute(f'UPDATE disciplinasxprofessores SET coddisciplina = {cd}, codprofessor = {cp}, curso = {c}, cargahoraria = {ch}, anoletivo = {al} WHERE codigodisciplinacurso = {cdc};')
+        comandosql.execute(f'update disciplinasxprofessores set coddisciplina = {cd}, codprofessor = {cp}, curso = {c}, cargahoraria = {ch}, anoletivo = {al} where codigodisciplinacurso = {cdc};')
         conexao.commit()
-        
-        if comandosql.rowcount > 0:
-            return 'Disciplina atualizada com sucesso!'
-        else:
-            return 'Nenhum registro foi atualizado. Verifique o código da disciplina no curso.'
-            
+        return 'Disciplina atualizada com sucesso !!!'
     except Exception as erro:
-        print(f'Ocorreu erro ao tentar atualizar esta disciplina: {erro}')
-        return 'Não foi possível atualizar esta disciplina!'
+        print(f'Ocorreu erro ao tentar atualizar esta disciplina: Erro===>>> {erro}')
+        return 'Não foi possível atualizar esta disciplina !!!'
 
 def verificar_disciplina_existe(codigo_disciplina):
     try:
