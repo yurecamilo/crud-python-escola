@@ -92,7 +92,7 @@ if abrebanco() == 1:
     resp = input('Deseja entrar no módulo de professores? (1-sim ou qualquer tecla para sair): ')
     while resp == '1':
         print('=' * 80)
-        print('{:^80}'.format('SISTEMA UNIVAP - DISCIPLINAS'))
+        print('{:^80}'.format('SISTEMA UNIVAP - PROFESSORES'))
         print('=' * 80)
         while True:
             codigoprof = input('Digite o código do professor (0 - mostra todos): ')
