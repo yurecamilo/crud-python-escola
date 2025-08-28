@@ -165,8 +165,8 @@ if abrebanco() == 1:
             continue
         else:
             break
-            comandosql.close()
-            conexao.close()
+        comandosql.close()
+        conexao.close()
 else:
     print('FIM DO PROGRAMA!!! Algum problema existente na conexão com banco de dados.')
 
