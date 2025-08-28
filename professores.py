@@ -3,11 +3,11 @@ import mysql.connector
 def abrebanco():
     try:
         global conexao
-        conexao = mysql.connector.Connect(host='127.0.0.1',port = 3306, database='univap',
+        conexao = mysql.connector.Connect(host='127.0.0.1',port = 3307, database='univap',
         user='root', password='')
         #Na escola remover port = 3307
         if conexao.is_connected():
-            informacaobanco = conexao.get_server_info()
+            informacaobanco = conexao.server_info
             print(f'Conectado ao servidor banco de dados - Versão {informacaobanco}')
             print('Conexão ok')
             global comandosql
@@ -104,10 +104,23 @@ if abrebanco() == 1:
             continue
 
         if consultarprofessor(codigoprof) == 'nc':
+
             nomeprof = input('Digite o nome do professor: ')
+            while len(nomeprof) < 0 or not nomeprof.isalpha():
+                nomeprof = input('ERRO !!! Nome do professor deve ter pelo menos 1 caractere e não pode conter números. Digite novamente: ')
+
             telefoneprof = input('Digite o telefone do professor: ')
-            idadeprof = input('Digite a idade do professor: ')
-            salarioprof = input('Digite o salário do professor: ')
+            while len(telefoneprof) < 0 or not telefoneprof.isnumeric():
+                telefoneprof = input('ERRO !!! Telefone do professor deve ter pelo menos 1 caractere e não pode conter letras. Digite novamente: ')
+
+            idadeprof = int(input('Digite a idade do professor: '))
+            while idadeprof < 0 or idadeprof >= 150:
+                idadeprof = int(input('ERRO !!! Idade do professor deve ser maior que 0 e menor que 150. Digite novamente: '))
+
+            salarioprof = float(input('Digite o salário do professor: '))
+            while salarioprof < 0:
+                salarioprof = float(input('ERRO !!! Salário do professor deve ser maior que 0. Digite novamente: '))
+
             msg = cadastrarprofessor(codigoprof, nomeprof, telefoneprof, idadeprof, salarioprof)
             print(msg)
         else:
@@ -116,10 +129,26 @@ if abrebanco() == 1:
                 op = input("ERRO !!! Escolha CORRETAMENTE : [A]-Alterar [E]-Excluir [C]- Cancelar Operações ==> ")
             if op == 'A':
                 print('Atenção: Código do professor não pode ser alterado!!!')
+
                 nomeprof = input('Digite o nome do professor: ')
+                while len(nomeprof) < 0 or not nomeprof.isalpha():
+                    nomeprof = input(
+                        'ERRO !!! Nome do professor deve ter pelo menos 1 caractere e não pode conter números. Digite novamente: ')
+
                 telefoneprof = input('Digite o telefone do professor: ')
-                idadeprof = input('Digite a idade do professor: ')
-                salarioprof = input('Digite o salário do professor: ')
+                while len(telefoneprof) < 0 or not telefoneprof.isnumeric():
+                    telefoneprof = input(
+                        'ERRO !!! Telefone do professor deve ter pelo menos 1 caractere e não pode conter letras. Digite novamente: ')
+
+                idadeprof = int(input('Digite a idade do professor: '))
+                while idadeprof < 0 or idadeprof >= 150:
+                    idadeprof = int(
+                        input('ERRO !!! Idade do professor deve ser maior que 0 e menor que 150. Digite novamente: '))
+
+                salarioprof = float(input('Digite o salário do professor: '))
+                while salarioprof < 0:
+                    salarioprof = float(input('ERRO !!! Salário do professor deve ser maior que 0. Digite novamente: '))
+
                 msg = atualizarprofessor(codigoprof, nomeprof, telefoneprof, idadeprof, salarioprof)
                 print(msg)
             elif op == 'E':

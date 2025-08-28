@@ -3,11 +3,11 @@ import mysql.connector
 def abrebanco():
     try:
         global conexao
-        conexao = mysql.connector.Connect(host='127.0.0.1',port = 3306, database='univap',
+        conexao = mysql.connector.Connect(host='127.0.0.1',port = 3307, database='univap',
         user='root', password='')
         #Na escola remover port = 3307
         if conexao.is_connected():
-            informacaobanco = conexao.get_server_info()
+            informacaobanco = conexao.server_info
             print(f'Conectado ao servidor banco de dados - Versão {informacaobanco}')
             print('Conexão ok')
             global comandosql
@@ -90,27 +90,17 @@ def atualizardisciplinaxprofessor(cdc=0, cd=0, cp=0, c=0, ch=0, al=0):
         comandosql.execute(f'SELECT * FROM disciplinasxprofessores WHERE codigodisciplinacurso = {cdc}')
         if len(comandosql.fetchall()) == 0:
             return 'Registro não encontrado!'
-
-        comandosql.execute(f'SELECT * FROM disciplinas WHERE codigodisc = {cd}')
-        if len(comandosql.fetchall()) == 0:
-            return 'Disciplina informada não existe!'
-
-        comandosql.execute(f'SELECT * FROM professores WHERE registro = {cp}')
-        if len(comandosql.fetchall()) == 0:
-            return 'Professor informado não existe!'
-
-        if c <= 0 or ch <= 0 or al <= 2000:
-            return 'Curso, carga horária ou ano letivo inválidos!'
         comandosql.execute(f'''
-                    UPDATE disciplinasxprofessores
-                    SET coddisciplina = {cd}, codprofessor = {cp}, curso = {c}, cargahoraria = {ch}, anoletivo = {al}
-                    WHERE codigodisciplinacurso = {cdc};
-                ''')
+                            UPDATE disciplinasxprofessores
+                            SET coddisciplina = {cd}, codprofessor = {cp}, curso = {c}, cargahoraria = {ch}, anoletivo = {al}
+                            WHERE codigodisciplinacurso = {cdc};
+                        ''')
         conexao.commit()
         return 'Disciplina atualizada com sucesso !!!'
     except Exception as erro:
         print(f'Ocorreu erro ao tentar atualizar esta disciplina: Erro===>>> {erro}')
         return 'Não foi possível atualizar esta disciplina !!!'
+
 
 def verificar_disciplina_existe(codigo_disciplina):
     try:
@@ -186,11 +176,35 @@ if abrebanco() == 1:
             continue
 
         if consultardisciplinaxprofessor(codigodisciplinaxcurso) == 'nc':
-            codigodisciplina = input('Digite o código da disciplina: ')
-            codigoprofessor = input('Digite o código do professor: ')
-            curso = input('Digite o curso: ')
-            cargahoraria = input('Digite a carga horária: ')
-            anoletivo = input('Digite o ano letivo: ')
+
+            codigodisciplina = int(input('Digite o código da disciplina: '))
+            while codigodisciplina <= 0:
+                print("ERRO !!! Código da disciplina deve ser maior que zero!")
+                codigodisciplina = int(input('Digite o código da disciplina: '))
+            while not verificar_disciplina_existe(codigodisciplina):
+                codigodisciplina = int(input('Erro: A disciplina informada não está cadastrada no sistema. Digite Novamente: '))
+
+            codigoprofessor = int(input('Digite o código do professor: '))
+            while codigoprofessor <= 0:
+                print("ERRO !!! Código do professor deve ser maior que zero!")
+            while not verificar_professor_existe(codigoprofessor):
+                codigoprofessor = int(input('Erro: O professor informado não está cadastrado no sistema. Digite novamente: '))
+
+            curso = int(input('Digite o curso: '))
+            while curso <= 0:
+                print("ERRO !!! Curso deve ser maior que zero!")
+                curso = int(input('Digite o curso: '))
+
+            cargahoraria = int(input('Digite a carga horária: '))
+            while cargahoraria <= 0:
+                print("ERRO !!! Carga horária deve ser maior que zero!")
+                cargahoraria = int(input('Digite a carga horária: '))
+
+            anoletivo = int(input('Digite o ano letivo: '))
+            while anoletivo <= 0 or anoletivo < 2000:
+                print("ERRO !!! Ano letivo deve ser maior que zero e maior que 2000!")
+                anoletivo = int(input('Digite o ano letivo: '))
+
             msg = cadastrardisciplinaxprofessor(codigodisciplinaxcurso, codigodisciplina, codigoprofessor, curso, cargahoraria, anoletivo)
             print(msg)
         else:
@@ -198,11 +212,36 @@ if abrebanco() == 1:
             while op != 'A' and op != 'E' and op != 'C':
                 op = input("ERRO !!! Escolha CORRETAMENTE : [A]-Alterar [E]-Excluir [C]- Cancelar Operações ==> ")
             if op == 'A':
-                codigodisciplina = input('Digite o código da disciplina: ')
-                codigoprofessor = input('Digite o código do professor: ')
-                curso = input('Digite o curso: ')
-                cargahoraria = input('Digite a carga horária: ')
-                anoletivo = input('Digite o ano letivo: ')
+
+                codigodisciplina = int(input('Digite o código da disciplina: '))
+                while codigodisciplina <= 0:
+                    print("ERRO !!! Código da disciplina deve ser maior que zero!")
+                    codigodisciplina = int(input('Digite o código da disciplina: '))
+                while not verificar_disciplina_existe(codigodisciplina):
+                    codigodisciplina = int(input('Erro: A disciplina informada não está cadastrada no sistema. Digite novamente: '))
+
+
+                codigoprofessor = int(input('Digite o código do professor: '))
+                while codigoprofessor <= 0:
+                    print("ERRO !!! Código do professor deve ser maior que zero!")
+                while not verificar_professor_existe(codigoprofessor):
+                    codigoprofessor= int(input('Erro: O professor informado não está cadastrado no sistema. Digite novamente:'))
+
+                curso = int(input('Digite o curso: '))
+                while curso <= 0:
+                    print("ERRO !!! Curso deve ser maior que zero!")
+                    curso = int(input('Digite o curso: '))
+
+                cargahoraria = int(input('Digite a carga horária: '))
+                while cargahoraria <= 0:
+                    print("ERRO !!! Carga horária deve ser maior que zero!")
+                    cargahoraria = int(input('Digite a carga horária: '))
+
+                anoletivo = int(input('Digite o ano letivo: '))
+                while anoletivo <= 0 or anoletivo < 2000:
+                    print("ERRO !!! Ano letivo deve ser maior que zero e maior que 2000!")
+                    anoletivo = int(input('Digite o ano letivo: '))
+
                 msg = atualizardisciplinaxprofessor(codigodisciplinaxcurso, codigodisciplina, codigoprofessor, curso, cargahoraria, anoletivo)
                 print(msg)
             elif op == 'E':
